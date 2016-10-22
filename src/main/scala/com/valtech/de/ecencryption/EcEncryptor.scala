@@ -102,7 +102,7 @@ object EcEncryptor {
   }
 
   def encrypt(publicKey: PublicKey, data: Array[Byte]): Array[Byte] = {
-    val cipher = Cipher.getInstance("ECIES")
+    val cipher = Cipher.getInstance("ECIES", "BC")
     cipher.init(Cipher.ENCRYPT_MODE, publicKey);
     cipher.update(data);
     cipher.doFinal();
