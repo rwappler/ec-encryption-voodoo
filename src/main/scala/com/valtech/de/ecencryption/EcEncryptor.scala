@@ -6,7 +6,6 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.security.AlgorithmParameters
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
@@ -23,15 +22,6 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter
 
 import javax.crypto.Cipher
-import java.security.spec.ECParameterSpec
-import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec
-import org.bouncycastle.crypto.params.IESParameters
-import org.bouncycastle.jce.spec.IESParameterSpec
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
-import java.security.AlgorithmParameterGenerator
-import java.lang.reflect.Proxy.KeyFactory
-import java.security.KeyFactory
-import java.security.spec.KeySpec
 
 object EcEncryptor {
 

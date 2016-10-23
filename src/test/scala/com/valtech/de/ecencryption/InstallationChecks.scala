@@ -30,19 +30,20 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEParameterSpec
 import java.security.SecureRandom
 import java.security.AlgorithmParameters
+import org.bouncycastle.jce.ECNamedCurveTable
 
 class InstallationChecks extends FlatSpec with Matchers {
 
-	// Security.addProvider(new BouncyCastleProvider)
+	Security.addProvider(new BouncyCastleProvider)
 
 	"The JCE provider" should "support EC key generation" in {
 		assert(Option(KeyPairGenerator.getInstance("EC")).isDefined);
 	}
 
-	/* it should "provide names of ECC curves" in {
+	it should "provide names of ECC curves" in {
      assert(!ECNamedCurveTable.getNames.isEmpty)
      ECNamedCurveTable.getNames.asInstanceOf[Enumeration[String]].foreach(info(_));
-  } */
+  }
 
 	it should "be able to generate an EC Key Pair" in {
 		assert(Option(EcEncryptor.generateKeyPair()).isDefined)
