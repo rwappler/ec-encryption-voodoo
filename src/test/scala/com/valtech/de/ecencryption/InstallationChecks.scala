@@ -67,6 +67,28 @@ class InstallationChecks extends FlatSpec with Matchers {
 		assert(keyPair.getPrivate.getFormat == convertedKP.getPrivate.getFormat)
 	}
 
+	it should "manage ECIES encryption-decryption round-trip" in {
+		val kpg = KeyPairGenerator.getInstance("EC")
+		val ecGenParameters = new ECGenParameterSpec("secp192k1")
+		kpg.initialize(ecGenParameters)
+
+		val kp = kpg.generateKeyPair()
+
+		val plainBytes = Array[Byte](0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
+
+		val encryptor = Cipher.getInstance("ECIES")
+		encryptor.init(Cipher.ENCRYPT_MODE, kp.getPublic)
+		val cipherBytes = encryptor.doFinal(plainBytes)
+
+		// ------------------------------------------------------------
+
+		val decryptor = Cipher.getInstance("ECIES")
+		decryptor.init(Cipher.DECRYPT_MODE, kp.getPrivate)
+		val decryptedBytes = decryptor.doFinal(cipherBytes)
+
+		assert(plainBytes.deep == decryptedBytes.deep)
+	}
+
 	"The JRE" should "have Unlimited Strength Jurisdiction Policies installed" in {
 		val aLongPassword = "Rumors say, the password length without the unlimited strength jurisdiction policy is at most 16 characters"
 		val myPayload = "If we can encrypt this sentence, then the policies are probably installed."
@@ -83,13 +105,13 @@ class InstallationChecks extends FlatSpec with Matchers {
 		encrypter.init(Cipher.ENCRYPT_MODE, key);
 		val cipherText = encrypter.doFinal(myPayload.toCharArray().map(_.toByte))
 		val algParams = encrypter.getParameters;
-		
+
 		val decryptor = Cipher.getInstance(algorithm);
 		decryptor.init(Cipher.DECRYPT_MODE, key, algParams);
 		val plainBytes = decryptor.doFinal(cipherText);
-		
-		val plainText = plainBytes.foldLeft(StringBuilder.newBuilder) ((builder, b) => builder.append(b.toChar)).mkString
-		
+
+		val plainText = plainBytes.foldLeft(StringBuilder.newBuilder)((builder, b) => builder.append(b.toChar)).mkString
+
 		assert(myPayload == plainText)
 
 	}
