@@ -67,7 +67,7 @@ class EncryptorTests extends FlatSpec {
   it should "decrypt payload with the correct key" in {
   	val (kp, plainText, cipherText) = makeEncryption();
   	
-  	assert(EcEncryptor.decrypt(kp, cipherText).deep == plainText.deep)
+  	assert(EcEncryptor.decrypt(kp.getPrivate, cipherText).deep == plainText.deep)
   }
    
 }

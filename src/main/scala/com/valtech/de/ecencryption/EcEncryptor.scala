@@ -43,6 +43,7 @@ object EcEncryptor {
 			case "sign" :: tail => nextOption(opts + ("command" -> "sign"), tail);
 			case "verify" :: tail => nextOption(opts + ("command" -> "verify"), tail)
 			case "encrypt" :: tail => nextOption(opts + ("command" -> "encrypt"), tail)
+			case "decrypt" :: tail => nextOption(opts +("command" -> "decrypt"), tail)
 			case "--keyFile" :: fileName :: tail => nextOption(opts + ("keyFile" -> new File(fileName)), tail)
 			case "--signature" :: fileName :: tail => nextOption(opts + ("signature" -> new File(fileName)), tail)
 			case "--data" :: fileName :: tail => nextOption(opts + ("data" -> new File(fileName)), tail);
@@ -100,6 +101,16 @@ object EcEncryptor {
 				output.flush()
 				output.close()
 
+			case "decrypt" => 
+			  val (cipherText, keyPair, output) =
+			    (Base64.getDecoder.decode(readAndClose(opts("data").asInstanceOf[File])),
+			        readKeyFile(opts("keyFile").asInstanceOf[File]),
+			            new FileOutputStream(opts("out").asInstanceOf[File]))
+			            
+			decrypt(keyPair.getPrivate, cipherText).foreach(output.write(_))
+			output.flush()
+			output.close()
+			
 			case x => throw new Error("Not yet implemented: " + x)
 		}
 	}
@@ -142,10 +153,10 @@ object EcEncryptor {
 		processCommand(nextOption(Map(), args.toList))
 	}
 
-	def decrypt(keyPair: KeyPair, cipherText: Array[Byte]) = {
+	def decrypt(privateKey: PrivateKey, cipherText: Array[Byte]) = {
 		val decryptor = Cipher.getInstance(encryptionAlgorithm);
 
-		decryptor.init(Cipher.DECRYPT_MODE, keyPair.getPrivate)
+		decryptor.init(Cipher.DECRYPT_MODE, privateKey)
 		decryptor.doFinal(cipherText);
 	}
 }
